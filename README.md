@@ -1,2 +1,2 @@
-# R-impl-mentation-des-fonctions-de-string.h-
+# Réimplémentation des fonctions de <string.h>
 Réimplémentation d'une partie des fonctions de &lt;string.h> en C
