@@ -1,0 +1,284 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+size_t my_strlen(const char* s)
+{
+	size_t size = 0;
+	size_t i = 0;
+	while(s[i] != '\0')
+	{
+		size += 1;
+		i += 1;
+	}
+	return size;
+}
+
+
+char* my_strcat(char* dest, const char* src)
+{
+	size_t i = my_strlen(dest);
+	
+	size_t j = 0;
+	while(src[j] != '\0')
+	{
+		dest[i] = src[j];
+		j += 1;
+		i += 1;
+	}
+	dest[i++] = '\0';
+	
+	return dest;
+}
+
+
+char* my_strncat(char* dest, const char* src, size_t n)
+{
+	size_t i = my_strlen(dest);
+	
+	size_t j = 0;
+	while(src[j] != '\0' && j < n)
+	{
+		dest[i] = src[j];
+		j += 1;
+		i += 1;
+	}
+	dest[i++] = '\0';
+	
+	return dest;
+}
+
+
+char* my_strcpy(char* dest, const char* src)
+{
+	size_t i = 0;
+	while(src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i += 1;
+	}
+	dest[i++] = '\0';
+	
+	return dest;
+}
+
+
+char* my_strncpy(char* dest, const char* src, size_t n)
+{
+	size_t i = 0;
+	while(src[i] != '\0' && i < n)
+	{
+		dest[i] = src[i];
+		i += 1;
+	}
+	
+	if(n >= my_strlen(src))
+		dest[i++] = '\0';
+	
+	return dest;
+}
+
+
+char* my_strdup(const char* s)
+{
+	size_t len_s = my_strlen(s);
+	char* dup = malloc((len_s + 1) * sizeof(char));
+	size_t i = 0;
+	for(; i < len_s + 1; ++i)
+	{
+		dup[i] = s[i];
+	}
+	return dup;
+}
+
+
+char* my_strndup(const char* s, size_t n)
+{
+	size_t len_s = my_strlen(s);
+	char* dup = malloc(n * sizeof(char));
+	size_t i = 0;
+	for(; i < n; ++i)
+	{
+		dup[i] = s[i];
+	}
+	if(n < len_s)
+		dup[i++] = '\0';
+	return dup;
+}
+
+
+int my_strcmp(const char* s1, const char* s2)
+{
+	for(size_t i = 0; i < my_strlen(s1); ++i)
+	{
+		if(s1[i] > s2[i])
+			return 1;
+		else if(s1[i] < s2[i])
+			return -1;
+	}
+	if(my_strlen(s1) == my_strlen(s2))
+	{
+		return 0;
+	}
+	else return -1;
+}
+
+
+int my_strncmp(const char* s1, const char* s2, size_t n)
+{
+	for(size_t i = 0; i < n; ++i)
+	{
+		if(s1[i] > s2[i])
+			return 1;
+		else if(s1[i] < s2[i])
+			return -1;
+	}
+	return 0;
+}
+
+
+char* my_strchr(const char* s, int c)
+{
+	size_t i = 0;
+	char* ptr = NULL;
+	while(s[i + 1] != '\0')
+	{
+		if(s[i] == c)
+		{
+			ptr = &s[i];
+			return ptr;
+		}
+		else i += 1;
+	}
+	return NULL;
+}
+
+
+char* my_strrchr(const char* s, int c)
+{
+	size_t i = my_strlen(s) + 1;
+	char* ptr = NULL;
+	while(i != 0)
+	{
+		if(s[i] == c)
+		{
+			ptr = &s[i];
+			return ptr;
+		}
+		else i -= 1;
+	}
+	return NULL;
+}
+
+
+char* my_strstr(const char* haystack, const char* needle)
+{
+	size_t len_n = my_strlen(needle);
+	size_t i = 0;
+	while(haystack[i] != '\0')
+	{
+		if(haystack[i] == needle[0])
+		{
+			size_t j = 1;
+			while(needle[j] != '\0')
+			{
+				if(haystack[i + j] != needle[j])
+				{
+					break;
+				}
+				j += 1;
+			}
+			if(j == len_n)
+			{
+				return &haystack[i];
+			}
+		}
+		i += 1;
+	}
+	return NULL;
+}
+
+
+char* my_strtok(char* str, const char* delim)
+{
+	static char* ptr = NULL;
+	size_t i = 0;
+	bool found_delim = false;
+	char* token = NULL;
+	
+	if(ptr == NULL) //première invocation
+	{
+		token = &str[0];
+		ptr = token;
+	}
+	else
+	{
+		if(str != NULL)
+		{
+			fprintf(stderr, "str must be NULL after the first invocation of strtok\n");
+			exit(EXIT_FAILURE);
+		}
+		else if(ptr[0] == '\0') //cas où il n'y avait qu'un seul groupe de délimiteur au début de la string
+		{
+			return NULL;
+		}
+		token = &ptr[0];
+	}
+	
+	while(ptr[i] != '\0')
+	{
+		for(size_t j = 0; j < my_strlen(delim); ++j)
+		{
+			if(ptr[i] == delim[j])
+			{
+				found_delim = true;
+			}
+		}
+		
+		if(found_delim)
+		{
+			ptr[i] = '\0';
+			if(my_strlen(token) == 0)
+			{
+				//aucun token encore trouvé, il ne faut pas retourner maintenant !
+				i += 1;
+				token = &ptr[i];
+				found_delim = false;
+			}
+			else 
+			{
+				ptr = &ptr[i + 1];
+				return token;
+			}
+		}
+		else i += 1;
+	}
+	//cas où aucun délimiteur n'a été trouvé
+	if(my_strlen(token) == 0)
+	{
+		return NULL;
+	}
+	else
+	{
+		ptr = &ptr[i];
+		return token;
+	}
+}
+
+
+
+int main(void)
+{
+	char* s = my_strndup("aobocodoeofog", 14);
+	
+	char* token = my_strtok(s, "o");
+	while(token != NULL)
+	{
+		printf("%s\n", token);
+		token = my_strtok(NULL, "o");
+	}
+	free(s);
+	
+	return 0;
+}
