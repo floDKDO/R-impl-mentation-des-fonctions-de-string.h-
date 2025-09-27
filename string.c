@@ -337,6 +337,95 @@ size_t my_strcspn(const char* s, const char* accept)
 }
 
 
+void* my_memset(void* s, int c, size_t n)
+{
+	for(size_t i = 0; i < n; ++i)
+	{
+		((unsigned char*)s)[i] = c;
+	}
+	return s;
+}
+
+
+void* my_memmove(void* dest, const void* src, size_t n)
+{
+	unsigned char temp[n];
+	for(size_t i = 0; i < n; ++i)
+	{
+		temp[i] = ((unsigned char*)src)[i];
+		((unsigned char*)dest)[i] = temp[i];
+	}
+	return dest;
+}
+
+
+void* my_memcpy(void* dest, const void* src, size_t n)
+{
+	for(size_t i = 0; i < n; ++i)
+	{
+		((unsigned char*)dest)[i] = ((unsigned char*)src)[i];
+	}
+	return dest;
+}
+
+
+void* my_memccpy(void* dest, const void* src, int c, size_t n)
+{
+	for(size_t i = 0; i < n; ++i)
+	{
+		((unsigned char*)dest)[i] = ((unsigned char*)src)[i];
+		if(((unsigned char*)src)[i] == c)
+		{
+			break;
+		}
+	}
+	return dest;
+}
+
+
+int my_memcmp(const void* s1, const void* s2, size_t n)
+{
+	if(n == 0)
+	{
+		return 0;
+	}
+
+	for(size_t i = 0; i < n; ++i)
+	{
+		if(((unsigned char*)s1)[i] != ((unsigned char*)s2)[i])
+		{
+			return ((unsigned char*)s1)[i] - ((unsigned char*)s2)[i];
+		}
+	}
+	return 0;
+}
+
+
+void* my_memchr(const void* s, int c, size_t n)
+{
+	for(size_t i = 0; i < n; ++i)
+	{
+		if(((unsigned char*)s)[i] == c)
+		{
+			return &s[i];
+		}
+	}
+	return NULL;	
+}
+
+
+void* my_memrchr(const void* s, int c, size_t n)
+{
+	for(size_t i = n - 1; i != 0; --i)
+	{
+		if(((unsigned char*)s)[i] == c)
+		{
+			return &s[i];
+		}
+	}
+	return NULL;	
+}
+
 
 int main(void)
 {
@@ -347,6 +436,15 @@ int main(void)
 	
 	size_t len = strcspn(s, "f");
 	printf("Len : %ld\n", len);
+	
+	char tab1[12] = {"mbcdefghiej"};
+	char tab2[12] = {"abcdefghijk"};
+	printf("%d\n", memcmp(tab1, tab2, 12));
+	
+	char* pointer = memchr(tab1, 'e', 12);
+	printf("Adresse : %p, valeur : %c\n", pointer, *pointer);
+	pointer = my_memchr(tab1, 'e', 12);
+	printf("Adresse : %p, valeur : %c\n", pointer, *pointer);
 	
 	char* token = my_strtok(s, "o");
 	while(token != NULL)
