@@ -267,10 +267,86 @@ char* my_strtok(char* str, const char* delim)
 }
 
 
+char* my_strpbrk(const char* s, const char* accept)
+{
+	size_t len_s = my_strlen(s);
+	size_t len_a = my_strlen(accept);
+	for(size_t i = 0; i < len_s; ++i)
+	{
+		for(size_t j = 0; j < len_a; ++j)
+		{
+			if(s[i] == accept[j])
+			{
+				return &s[i];
+			}
+		}
+	}
+	return NULL;
+}
+
+
+size_t my_strspn(const char* s, const char* accept)
+{
+	//partir du début de s, chercher dans accept (peu importe si une lettre est présente plusieurs fois dans accept) si s[i] appartient à accept. 
+	//Si oui, incrémentation de length, si non return la length
+	
+	size_t len_s = my_strlen(s);
+	size_t len_a = my_strlen(accept);
+	size_t length = 0;
+	bool letter_found = false;
+	
+	for(size_t i = 0; i < len_s; ++i)
+	{
+		for(size_t j = 0; j < len_a; ++j)
+		{
+			if(s[i] == accept[j])
+			{
+				length += 1;
+				letter_found = true;
+				break;
+			}
+		}
+		if(!letter_found)
+		{
+			break;
+		}
+		else letter_found = false;
+	}
+	return length;
+}
+
+
+size_t my_strcspn(const char* s, const char* accept)
+{
+	size_t len_s = my_strlen(s);
+	size_t len_a = my_strlen(accept);
+	size_t length = 0;
+	
+	for(size_t i = 0; i < len_s; ++i)
+	{
+		for(size_t j = 0; j < len_a; ++j)
+		{
+			if(s[i] == accept[j])
+			{
+				return length;
+			}
+		}
+		length += 1;
+	}
+	return length;
+}
+
+
 
 int main(void)
 {
 	char* s = my_strndup("aobocodoeofog", 14);
+	
+	char* ptr = my_strpbrk(s, "g");
+	printf("%c\n", *ptr);
+	
+	size_t len = strcspn(s, "f");
+	printf("Len : %ld\n", len);
 	
 	char* token = my_strtok(s, "o");
 	while(token != NULL)
@@ -278,6 +354,7 @@ int main(void)
 		printf("%s\n", token);
 		token = my_strtok(NULL, "o");
 	}
+	
 	free(s);
 	
 	return 0;
